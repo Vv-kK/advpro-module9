@@ -1,0 +1,25 @@
+## Refleksi
+
+1. Pada unary RPC, client mengirim satu request ke server dan mendapatkan satu response balik. Jenis RPC ini mirip dengan function call pada umumnya. Unary RPC cocok untuk digunakan pada request jangka pendek yang tipenya client mengirim request dan menunggu response dari server. Contohnya ketika menampilkan profil pengguna.
+Pada server streaming RPC, client mengirim satu request ke server dan mendapatkan beberapa respons. Client akan menunggu hingga tidak ada lagi respons yang dikirim dari stream. Jenis RPC ini cocok untuk digunakan ketika server perlu mengembalikan banyak data atau ketika proses di server dipisah menjadi beberapa tahap. Contohnya mengirim harga real-time dari saham.
+Pada bi-directional streaming RPC, client dan server saling mengirimkan request dan respons kepada satu sama lain. Urutan pengiriman request dan respons ini akan dijaga supaya tidak terbalik. Jenis RPC ini cocok digunakan ketika client dan server perlu mengirimkan banyak data secara asinkronus. Contohnya real time collaborative applications
+
+2. Tiap potongan data yang dikirimkan grpc dilakukan validasi autorisasi/autentikasi sedangkan REST hanya melakukan 1 kali validasi tiap request. Enkripsi data dilakukan secara terpisah untuk data yang dikirim client dan server. 
+
+3. Membangun sistem yang menggunakan streaming dua arah dan gRPC dapat menimbulkan tantangan dalam mencegah race condition dan memastikan sinkronisasi data. Selain itu, koneksi yang berlangsung lama dapat mengkomplikasikan proses balancing beban karena adanya banyak koneksi yang tidak dapat diputus dengan mudah, yang pada akhirnya dapat memberatkan server.
+
+4. Keuntungan yang diperoleh adalah mempercepat pengolahan data dengan asinkronus dan mudahnya integrasi dengan modul tokio lainnya. Di sisi lain, kerugian yang diperoleh adalah program menjadi lebih kompleks dan autentikasi/autorisasi perlu dilakukan untuk tiap data
+
+5. Rust gRPC menyediakan metode untuk meningkatkan kemudahan pemeliharaan dan kemampuan perluasan karena modifikasi dan penambahan fitur dapat dilakukan dengan lebih mudah. Ini terjadi karena menggunakan proto untuk membuat sebuah antarmuka yang dapat diimplementasikan oleh kelas dalam Rust, sehingga mempermudah dalam memperluas kode.
+
+6. MyPaymentService dapat diimplementasikan sebagai server streaming, tidak hanya dalam mode unary saja, untuk memfasilitasi pengiriman data yang kompleks dengan kecepatan lebih tinggi dan mengurangi overhead pembuatan koneksi antara klien dan server.
+
+7. Dengan penggunaan gRPC, kita tidak perlu lagi mempertimbangkan cara akses modul melalui metode HTTP karena gRPC secara otomatis menghubungkan panggilan method yang diinginkan. Hal ini terjadi karena ada pemahaman yang telah ditetapkan melalui file proto, memungkinkan klien untuk memanggil fungsi dari server seolah-olah secara langsung. Ini menyederhanakan konektivitas dan operasi antar berbagai teknologi, platform, dan sistem terdistribusi.
+
+
+8. Keuntungan HTTP/2 adalah kemampuannya untuk melakukan banyak permintaan dan respon dalam satu koneksi tanpa perlu menutup koneksi. Namun, kerugiannya dibandingkan dengan HTTP/1.1 terletak pada biaya overhead yang lebih tinggi dalam kinerja dan penggunaan memori karena HTTP/2 mempertahankan satu koneksi untuk banyak permintaan dan respon. Hal ini dapat mengakibatkan biaya yang lebih besar untuk pengiriman data kecil dibandingkan dengan HTTP/1.1, meskipun HTTP/2 lebih efisien untuk pengiriman data yang besar.
+
+9. Cara kerja antara REST APIs dan gRPC telah menunjukkan perbedaan yang jelas. REST APIs memerlukan waktu lebih lama daripada gRPC untuk komunikasi real-time karena setiap pengiriman permintaan membutuhkan pembuatan koneksi baru dari klien ke server, sedangkan gRPC hanya memerlukan satu koneksi untuk semua permintaan. Ini membuat gRPC lebih optimal untuk komunikasi real-time dan responsif dibandingkan dengan REST APIs karena kecepatannya yang lebih baik, sehingga lebih "real time".
+
+10. Dengan Protocol Buffers, pengguna harus mendefinisikan skema data secara eksplisit menggunakan file proto, yang kemudian digunakan untuk menghasilkan kode stub untuk klien dan server. Ini menghasilkan kode yang lebih terstruktur dan ketat, memungkinkan untuk validasi data yang ketat dan penanganan error yang lebih baik. Serialisasi dan deserialisasi data juga terjadi secara otomatis sehingga data terjamin bisa digunakan dan tidak dalah tipe. 
+Di sisi lain, JSON dalam REST API tidak memerlukan definisi skema yang kaku, sehingga memungkinkan fleksibilitas yang lebih besar dalam hal struktur data. Namun, ini juga dapat menghasilkan ketidakpastian dalam format data dan kesulitan dalam validasi data secara konsisten di seluruh aplikasi. Dampaknya ada kemungkinan data yang dikirimkan tidak dapat dipakai. Jadi, sementara gRPC dengan Protocol Buffers memberikan kejelasan dan validasi yang ketat, REST API dengan JSON memberikan fleksibilitas yang lebih besar dalam pertukaran data.
